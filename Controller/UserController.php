@@ -2,6 +2,7 @@
     session_start();
     include '../Model/User.php';
     include '../Include/UserValidate.php';
+    include '../Dao/UserDAO.php';
     
     if ( (!empty($_POST['txtNome'])) && (!empty($_POST['txtSobrenome'])) &&
         (!empty($_POST['txtEmail'])) && (!empty($_POST['txtIdade'])) && (!empty($_POST['txtSenha'])) )
@@ -23,6 +24,9 @@
             $user->idade = $_POST['txtIdade'];
             $user->email = $_POST['txtEmail'];
             $user->senha = $_POST['txtSenha'];
+
+            $userDao = new UserDAO();
+            $userDao->create($user);
 
             $_SESSION['user'] = $user->nome;
             $_SESSION['mail'] = $user->email;
