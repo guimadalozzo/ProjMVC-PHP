@@ -58,6 +58,23 @@
                 echo $e;
             }
         }
+
+        public function find($email, $senha) {
+            try {
+                $statement = $this->connection->prepare("SELECT * FROM Usuarios WHERE email = ? and password = ?");
+                $statement->bindValue(1, $email);
+                $statement->bindValue(2, $senha);
+                $statement->execute();
+                $user = $statement->fetchAll();
+
+                $this->connection = null;
+
+                return $user;
+            } catch (PDOException $e) {
+                echo "Ocorreram erros ao procurar o usuário!";
+                echo $e;
+            }
+        }
     }
 
 ?>
