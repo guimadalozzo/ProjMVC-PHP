@@ -3,18 +3,12 @@
     include '../Model/User.php';
     include '../Include/UserValidate.php';
     include '../Dao/UserDAO.php';
-    
-    if ( (!empty($_POST['txtNome'])) && (!empty($_POST['txtSobrenome'])) &&
-        (!empty($_POST['txtEmail'])) && (!empty($_POST['txtIdade'])) && (!empty($_POST['txtSenha'])) )
-    {
+
+    function criar() {
         $erros = array();
 
-        if (!UserValidate::testarIdade($_POST['txtIdade'])) {
-            $erros[] = 'Idade inválida';
-        }
-        if (!UserValidate::testarEmail($_POST['txtEmail'])) {
-            $erros[] = 'E-mail inválido';
-        }
+        if (!UserValidate::testarIdade($_POST['txtIdade']))  $erros[] = 'Idade inválida';
+        if (!UserValidate::testarEmail($_POST['txtEmail']))  $erros[] = 'E-mail inválido';
         
         if (count($erros) == 0) {
             $user = new User();
@@ -38,13 +32,47 @@
             header("location:../View/User/error.php");
         }
     }
-    else {
-        $erros = array();
-        $erros[] = 'Informe todos os campos';
-        $err = serialize($erros);
-        $_SESSION['erros'] = $err;
-            
-        header("location:../View/User/error.php");
+    
+    function listar() {
+        $userDao = new UserDAO();
+        $usuarios = $userDao->search();
+
+        $_SESSION['users'] = serialize($usuarios);
+        header("location:../View/User/list.php");
+    }
+
+    function atualizar() {
+        echo "Método para atualizar um usuário";
+    }
+
+    function deletar() {
+        $id = $_GET['id'];
+        if (isset($id)) {
+            $userDao = new UserDAO();
+            $userDao->delete($id);
+            header("location:../../Controller/UserController.php?operation=consultar");
+        }
+        else {
+            echo 'Usuário informado não existente';
+        }
+    }
+
+    $operacao = $_GET['operation'];
+    if (isset($operacao)) {
+        switch($operacao) {
+            case 'cadastrar':
+                criar();
+                break;
+            case 'consultar':
+                listar();
+                break;
+            case 'atualizar':
+                atualizar();
+                break;
+            case 'deletar':
+                deletar();
+                break;
+        }
     }
 ?>
 
